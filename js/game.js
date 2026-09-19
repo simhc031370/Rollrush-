@@ -238,14 +238,12 @@ export class MarbleRace {
     if (!pack.length) return;
     let focus = pack[0];
     for (const marble of pack) {
-      if (this.status === "running") {
-        if (marble.y > focus.y) focus = marble;
-      } else if (marble.y < focus.y) focus = marble;
+      if (marble.y > focus.y) focus = marble;
     }
     const approaching = this.status === "running" && focus.y > this.map.zoomY - 8;
-    this.camera.targetX = focus.x;
-    this.camera.targetY = this.status === "ready" ? this.map.spawn.y + 4 : focus.y + 1.2;
-    this.camera.targetZoom = approaching ? 58 : this.status === "ready" ? 46 : 40;
+    this.camera.targetX = this.status === "ready" ? this.map.spawn.x : focus.x;
+    this.camera.targetY = this.status === "ready" ? focus.y + 3.2 : focus.y + 1.2;
+    this.camera.targetZoom = approaching ? 58 : this.status === "ready" ? 36 : 40;
     const k = 1 - Math.pow(0.001, dt);
     this.camera.x += (this.camera.targetX - this.camera.x) * k;
     this.camera.y += (this.camera.targetY - this.camera.y) * k;

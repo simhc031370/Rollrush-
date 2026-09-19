@@ -1,17 +1,17 @@
 import { seg } from "./physics.js";
 
-function hopper(mid, top = -14) {
-  const hL = mid - 3.5;
-  const hR = mid + 3.5;
+function hopper(mid, top = -8) {
+  const hL = mid - 3.8;
+  const hR = mid + 3.8;
   return {
     segments: [
-      seg(hL, top, hL, 7.1),
-      seg(hR, top, hR, 7.1),
-      seg(hL, 7.1, mid - 1.15, 9.35),
-      seg(hR, 7.1, mid + 1.15, 9.35),
+      seg(hL, top, hL, 6.4),
+      seg(hR, top, hR, 6.4),
+      seg(hL, 6.4, mid - 1.55, 8.7),
+      seg(hR, 6.4, mid + 1.55, 8.7),
     ],
-    gate: { ax: mid - 1.2, ay: 9.5, bx: mid + 1.2, by: 9.5 },
-    spawn: { x: mid, y: 0.8, width: 5.6 },
+    gate: { ax: mid - 1.6, ay: 8.88, bx: mid + 1.6, by: 8.88 },
+    spawn: { x: mid, y: 0.4, width: 6.2 },
   };
 }
 
@@ -108,7 +108,7 @@ export const MAPS = [
         spawn: top.spawn,
         gate: top.gate,
         segments: [...walls(WIDTH, goalY + 8), ...top.segments, ...shelves, ...finishPocket(MID, goalY)],
-        pegs: hexPegs(16.5, 18, 7, MID, 1.7, 2.55),
+        pegs: hexPegs(11.2, 20, 7, MID, 1.7, 2.45),
         spinners: [],
       };
     })(),
@@ -144,6 +144,7 @@ export const MAPS = [
           { x: 8, y: 67.8, r: 0.3 },
         ],
         spinners: [
+          { x: 8, y: 13.6, length: 4.2, thickness: 0.22, angle: 0.3, omega: 2.3 },
           { x: 8, y: 24.8, length: 4.4, thickness: 0.22, angle: 0.4, omega: 2.4 },
           { x: 5.4, y: 40.2, length: 3.6, thickness: 0.22, angle: 1.1, omega: -2.1 },
           { x: 10.6, y: 40.2, length: 3.6, thickness: 0.22, angle: 0.2, omega: 2.1 },

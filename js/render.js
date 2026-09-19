@@ -102,6 +102,17 @@ export class Renderer {
     ctx.shadowColor = dark ? "rgba(0,0,0,0.35)" : "rgba(90,70,40,0.2)";
     ctx.shadowBlur = 8;
     for (const segment of race.world.segments) {
+      if (segment.gate) {
+        ctx.save();
+        ctx.strokeStyle = "rgba(255, 206, 84, 0.95)";
+        ctx.lineWidth = 0.28;
+        ctx.beginPath();
+        ctx.moveTo(segment.ax, segment.ay);
+        ctx.lineTo(segment.bx, segment.by);
+        ctx.stroke();
+        ctx.restore();
+        continue;
+      }
       ctx.beginPath();
       ctx.moveTo(segment.ax, segment.ay);
       ctx.lineTo(segment.bx, segment.by);
@@ -183,7 +194,7 @@ export class Renderer {
     const w = 118 * this.dpr;
     const h = 210 * this.dpr;
     const x = this.canvas.width - w - 18 * this.dpr;
-    const y = 88 * this.dpr;
+    const y = this.canvas.height - h - 22 * this.dpr;
     ctx.save();
     ctx.globalAlpha = 0.92;
     ctx.fillStyle = dark ? "rgba(8,18,15,0.72)" : "rgba(255,250,240,0.78)";

@@ -177,7 +177,7 @@ textarea { min-height: 150px; resize: vertical; line-height: 1.45; }
   right: 16px;
   top: 86px;
   width: 220px;
-  max-height: calc(100vh - 330px);
+  max-height: calc(100vh - 360px);
   overflow: auto;
   border-radius: 22px;
   padding: 14px;
