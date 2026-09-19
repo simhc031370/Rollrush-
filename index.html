@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>교실 구슬 추첨기</title>
+  <meta name="description" content="수업에서 바로 쓰는 구슬 추첨기. 광고와 로그인 없이 발표자와 당번을 뽑습니다.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2310231c'/%3E%3Ccircle cx='24' cy='28' r='10' fill='%23ffce54'/%3E%3Ccircle cx='42' cy='36' r='8' fill='%238ee4c2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./css/app.css">
+</head>
+<body>
+  <canvas id="stage" aria-label="구슬 경기장"></canvas>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true"></span>
+      <div>
+        <h1 data-i18n="title">교실 구슬 추첨기</h1>
+        <p data-i18n="subtitle">구슬을 굴려 발표자·당번·모둠을 뽑습니다</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <span id="recBadge" class="rec-badge hidden">REC</span>
+      <span id="countBadge" class="count-badge">0</span>
+      <button id="btnHelp" class="icon-btn" type="button" title="도움말">?</button>
+      <button id="btnLang" class="icon-btn" type="button">EN</button>
+      <button id="btnFullscreen" class="icon-btn" type="button" data-i18n="fullscreen">전체 화면</button>
+    </div>
+  </header>
+
+  <aside id="settingsPanel" class="panel">
+    <button id="btnToggleSettings" class="panel-toggle" type="button">
+      <span data-i18n="settings">설정</span>
+      <i></i>
+    </button>
+    <div class="panel-body">
+      <section>
+        <label for="inNames" data-i18n="names">이름 명단</label>
+        <p class="hint" data-i18n="namesHint">쉼표 또는 줄바꿈으로 구분 · 민준*2 는 구슬 2개 · 서연/3 은 가산점</p>
+        <textarea id="inNames" data-i18n-placeholder="placeholder">민준
+서연
+하준
+지유
+도윤
+서준
+하윤
+지호</textarea>
+        <div class="actions">
+          <button id="btnShuffle" class="btn ghost" type="button" data-i18n="shuffle">섞기</button>
+          <button id="btnStart" class="btn primary" type="button" data-i18n="start">출발</button>
+        </div>
+      </section>
+
+      <section>
+        <label for="sltMap" data-i18n="map">맵</label>
+        <select id="sltMap"></select>
+        <p id="mapHint" class="hint"></p>
+      </section>
+
+      <section>
+        <label data-i18n="winner">당첨</label>
+        <div class="btn-row">
+          <button type="button" class="chip-btn active" data-winner="first" data-i18n="first">1등</button>
+          <button type="button" class="chip-btn" data-winner="last" data-i18n="last">꼴등</button>
+          <input id="inNth" class="num" type="number" min="1" value="1" title="등수">
+          <button type="button" class="chip-btn" data-winner="nth" data-i18n="nth">등수</button>
+          <button type="button" class="chip-btn" data-winner="range" data-i18n="multi">여러 명</button>
+        </div>
+        <div id="rangeRow" class="range-row hidden">
+          <input id="inRangeStart" class="num" type="number" min="1" value="1">
+          <span>~</span>
+          <input id="inRangeEnd" class="num" type="number" min="1" value="3">
+        </div>
+      </section>
+
+      <section class="toggles">
+        <label class="check"><input id="chkSkills" type="checkbox" checked> <span data-i18n="skills">스킬</span></label>
+        <label class="check"><input id="chkRecord" type="checkbox"> <span data-i18n="record">녹화</span></label>
+        <label class="check"><input id="chkDark" type="checkbox" checked> <span data-i18n="dark">어두운 화면</span></label>
+        <label class="check"><input id="chkExclude" type="checkbox" checked> <span data-i18n="exclude">당첨자 제외</span></label>
+      </section>
+
+      <section>
+        <label for="sltSpeed" data-i18n="speed">배속</label>
+        <select id="sltSpeed">
+          <option value="1">1×</option>
+          <option value="1.5">1.5×</option>
+          <option value="2">2×</option>
+        </select>
+        <p class="hint" data-i18n="holdFf">화면을 길게 누르면 배속</p>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <label data-i18n="excluded">제외된 이름</label>
+          <button id="btnRestoreAll" class="text-btn" type="button" data-i18n="restoreAll">모두 복구</button>
+        </div>
+        <div id="excludedList" class="chip-wrap"></div>
+      </section>
+
+      <section>
+        <label data-i18n="history">최근 결과</label>
+        <ul id="historyList" class="history"></ul>
+      </section>
+    </div>
+  </aside>
+
+  <aside class="rank-board">
+    <h2 data-i18n="ranks">순위</h2>
+    <ol id="rankList"></ol>
+    <button id="btnShuffleBoard" class="sr-only" type="button">shuffle</button>
+  </aside>
+
+  <div id="winnerModal" class="modal">
+    <div class="modal-card">
+      <p class="kicker" data-i18n="winnerTitle">당첨!</p>
+      <h2 id="winnerNames">–</h2>
+      <div class="modal-actions">
+        <button id="btnCopy" class="btn ghost" type="button" data-i18n="copy">결과 복사</button>
+        <button id="closeWinner" class="btn primary" type="button" data-i18n="close">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="helpModal" class="modal">
+    <div class="modal-card narrow">
+      <h2 data-i18n="helpTitle">수업에서 쓰는 법</h2>
+      <p data-i18n="helpBody">프로젝터나 TV에 띄운 뒤 이름만 넣고 출발을 누르세요.</p>
+      <ul class="help-list">
+        <li><code>이름*2</code> — 같은 이름 구슬 2개</li>
+        <li><code>이름/3</code> — 가산점(조금 더 크고 스킬 확률 ↑)</li>
+        <li>Space 출발 · S 섞기 · F 전체화면</li>
+      </ul>
+      <button id="closeHelp" class="btn primary" type="button" data-i18n="close">닫기</button>
+    </div>
+  </div>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
