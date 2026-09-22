@@ -1,0 +1,11 @@
+{
+  "name": "classroom-marble-draw",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "교실용 구슬 추첨기 — 오프라인에서 바로 쓰는 무작위 발표자 뽑기",
+  "scripts": {
+    "start": "python3 serve.py",
+    "test": "node --test tests/*.test.mjs"
+  }
+}
